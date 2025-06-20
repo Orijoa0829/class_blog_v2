@@ -18,11 +18,33 @@ public class BoardPersistRepository {
     // DI
     // @Autowired
     private final EntityManager em;
-    // JPQL 을 이용한 게시글 상세 보기
-    public String detail () {
-        String jpql = "SELECT b.content FROM Board b WHERE id = ?";
-        return em.createQuery(jpql, Board.class).toString();
+
+
+    // jpql을 사용한 조회 방법 (비교용)
+    public Board findByWithJPQL(Long id) {
+        // ? 을 사용하지않는것을 권장 -> 네임드 파라미터 사용
+        String jpql = "SELECT b.content FROM Board b WHERE b.id = :id";
+
+        try {
+            return em.createQuery(jpql, Board.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+            //주의 : 결과 없으면 NoResultException
+        } catch (Exception e) {
+            return null;
+        }
+        //JPQL 단점 :
+        // 1. 1차 캐시 우회하여 항상 DB 먼저 접근함
+        // 2. 코드가 복잡할 수 있음.
+        // 3. getSingleResult() 를 호출함 -> 예외처리 해줘야 됨.
+
     }
+
+
+    public Board findById(Long id) {
+        return em.find(Board.class, id);
+    }
+
     // JPQL 을 사용한 게시글 목록 조회
     public List<Board> findAll() {
         // JPQL : 엔티티 객체를 대상으로 하는 객체지향 쿼리
@@ -35,7 +57,6 @@ public class BoardPersistRepository {
 //        return boardList;
         return em.createQuery(jpql, Board.class).getResultList();
     }
-
 
 
     // 게시글 저장 기능 - 영속성 컨텍스트 활용

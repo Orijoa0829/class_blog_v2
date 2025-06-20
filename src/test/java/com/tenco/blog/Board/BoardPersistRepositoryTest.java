@@ -16,7 +16,15 @@ public class BoardPersistRepositoryTest {
 
     @Autowired
     private BoardPersistRepository br;
+    @Test
+    public void findById_test () {
+        //given
 
+        //when
+
+        //than
+
+    }
     @Test
     public void save_test () {
         //given
