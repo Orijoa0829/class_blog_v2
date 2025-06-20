@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
 	// JPA 의존성 설정(ORM -- 자바 진영 --> JPA(스펙:인터페이스) --> 하이버 네이트
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
