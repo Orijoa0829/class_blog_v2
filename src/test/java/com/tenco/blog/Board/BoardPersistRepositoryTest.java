@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 import java.util.List;
+import java.util.Optional;
 
 @Import(BoardPersistRepository.class)
 @DataJpaTest
@@ -16,15 +17,45 @@ public class BoardPersistRepositoryTest {
 
     @Autowired
     private BoardPersistRepository br;
+
     @Test
-    public void findById_test () {
+    public void deleteById_test () {
         //given
-
+        Long id = 1L;
         //when
-
-        //than
+        //삭제 할 게시글이 존재하는지 확인
+        Board targetBoard = br.findById(id);
+        Assertions.assertThat(targetBoard).isNotNull();
+        //영속성 컨텍스트에서 삭제 실행
+        br.deleteById(id);
+        //then
+        List<Board> afterDeleteBoardList = br.findAll();
+        Assertions.assertThat(afterDeleteBoardList.size()).isEqualTo(3);
 
     }
+
+
+
+
+    @Test
+    public void findById_test () {
+
+        //given
+        //더미데이터 4개 있음
+        //insert into board_tb(title, content, username, created_at) values('제목1','내용1','ssar',now());
+        //insert into board_tb(title, content, username, created_at) values('제목2','내용2','ssar',now());
+        //insert into board_tb(title, content, username, created_at) values('제목3','내용3','cos',now());
+        //insert into board_tb(title, content, username, created_at) values('제목4','내용4','love',now());
+        //when
+        // id 기반으로 1건 조회 했을 때,
+        Board board = br.findById(1L);
+        //than
+        //유저네임이 "", 제목이 "", 내용이 "" 이어야 한다.
+        Assertions.assertThat(board.getId()).isNotNull();
+        Assertions.assertThat(board.getTitle()).isEqualTo("제목1");
+        Assertions.assertThat(board.getContent()).isEqualTo("내용1");
+    }
+
     @Test
     public void save_test () {
         //given

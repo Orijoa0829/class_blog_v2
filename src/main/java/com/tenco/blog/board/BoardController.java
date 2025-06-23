@@ -16,6 +16,51 @@ import java.util.List;
 public class BoardController {
     private final BoardPersistRepository br;
 
+
+    // 게시글 삭제 구현하기
+    // 주소 설계 : /board/{{board.id}}/delete
+    @PostMapping("/board/{id}/delete")
+    public String delete(@PathVariable(name = "id") Long id) {
+        br.deleteById(id);
+        return "redirect:/";
+    }
+
+
+    /**
+     * 게시글 수정
+     * Get 맵핑
+     *
+     * @param id (board pk)
+     * @return update-form.mustache
+     */
+    @GetMapping("/board/{id}/update-form")
+    public String update(@PathVariable(name = "id") Long id, HttpServletRequest request) {
+        // 클라이언트가 수정 버튼 액션 -> 서버에서 update-form 머스테치 파일
+        Board board = br.findById(id);
+        // 머스태치 파일에 조회된 데이터를 바인딩 처리
+        request.setAttribute("board", board);
+        return "board/update-form";
+
+        //
+    }
+
+    //게시글 수정 구현 하기 - 전에 쓰던 내용 나오도록 : 클라이언트가 서버에게 전에 쓰던 내용 데이터를 보내게-post방식
+    @PostMapping("/board/{id}/update-form")
+    public String update(@PathVariable(name = "id") Long id, BoardRequest.UpdateDTO reqDTO) {
+        //트랜젝션
+        // 수정 -- select -- 값을 확인해서 -- 데이터를 수정 -- update
+        // JPA 영속성 컨텍스트 활용
+        br.update(id, reqDTO);
+        // 수정 전략 더티 체킹을 활용
+        // 장점
+        // 1. UPDATE 쿼리 자동생성
+        // 2. 변경된 필드만 업데이트 (성능 최적화)
+        // 3. 영속성 컨텍스트 일관성 유지
+        // 4.
+
+        return "redirect:/";
+    }
+
     //상세보기 구현 하기
     // 주소 설계 : http://localhost:8080/board/{id}
     @GetMapping("/board/{id}")
